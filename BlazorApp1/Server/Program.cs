@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.ResponseCompression;
+using BlazorApp1.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddDbContext<WeatherDbContext>();
 
 var app = builder.Build();
 
