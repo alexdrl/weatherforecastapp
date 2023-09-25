@@ -35,12 +35,37 @@ else
             }
         </tbody>
     </table>
+    <EditForm Model="@forecastToAdd" OnValidSubmit="@AddForecast">
+        <ValidationSummary />
+
+        <InputText @bind-Value="forecastToAdd!.Summary"></InputText>
+        <InputDate @bind-Value="forecastToAdd!.Date"></InputDate>
+        <InputNumber @bind-Value="forecastToAdd!.TemperatureC"></InputNumber>
+        <button type="submit">Submit</button>
+    </EditForm>
 }
 
 @code {
     private WeatherForecast[]? forecasts;
+    private WeatherForecast? forecastToAdd;
 
     protected override async Task OnInitializedAsync()
+    {
+        await ReloadDataAsync();
+        forecastToAdd = new WeatherForecast
+            {
+                Date = DateTime.Now
+            };
+    }
+
+    private async Task AddForecast()
+    {
+        var response = await Http.PostAsJsonAsync<WeatherForecast>("WeatherForecast", forecastToAdd);
+
+        await ReloadDataAsync();
+    }
+
+    private async Task ReloadDataAsync()
     {
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
     }

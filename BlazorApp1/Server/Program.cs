@@ -1,4 +1,5 @@
 using BlazorApp1.Shared;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<WeatherDbContext>();
 
 var app = builder.Build();
+
+InitializeDatabase(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -35,3 +38,12 @@ app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+static void InitializeDatabase(WebApplication app)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
+        db.Database.Migrate();
+    }
+}

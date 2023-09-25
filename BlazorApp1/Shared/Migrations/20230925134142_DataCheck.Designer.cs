@@ -3,6 +3,7 @@ using System;
 using BlazorApp1.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorApp1.Shared.Migrations
 {
     [DbContext(typeof(WeatherDbContext))]
-    partial class WeatherDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230925134142_DataCheck")]
+    partial class DataCheck
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.11");
@@ -34,7 +37,7 @@ namespace BlazorApp1.Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Forecast", (string)null);
+                    b.ToTable("Forecast");
 
                     b.HasData(
                         new
