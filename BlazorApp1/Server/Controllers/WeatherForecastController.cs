@@ -1,3 +1,4 @@
+using BlazorApp1.Domain;
 using BlazorApp1.Shared;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BlazorApp1.Shared
+namespace BlazorApp1.Domain
 {
     public class WeatherForecast
     {
@@ -15,6 +15,6 @@ namespace BlazorApp1.Shared
 
         public string? Summary { get; set; }
 
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        public int TemperatureF => 32 + (int)Math.Round(TemperatureC / 0.5556, 0);
     }
 }

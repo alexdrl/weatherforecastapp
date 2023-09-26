@@ -1,4 +1,5 @@
-﻿using BlazorApp1.Shared.Migrations;
+﻿using BlazorApp1.Domain;
+using BlazorApp1.Shared.Migrations;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorApp1.Shared
