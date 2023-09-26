@@ -44,6 +44,9 @@ static void InitializeDatabase(WebApplication app)
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
-        db.Database.Migrate();
+      //  db.Database.Migrate();
     }
 }
+
+public partial class Program
+{ }
