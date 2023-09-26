@@ -1,5 +1,5 @@
+using BlazorApp1.Data;
 using BlazorApp1.Domain;
-using BlazorApp1.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;

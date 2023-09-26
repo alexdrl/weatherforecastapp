@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Server", "Blazor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Client", "BlazorApp1\Client\BlazorApp1.Client.csproj", "{33DB976B-83B7-4798-8C5B-D6CF2F689D31}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Shared", "BlazorApp1\Shared\BlazorApp1.Shared.csproj", "{2C713169-5AAB-44D0-8C38-AE42945302F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Data", "BlazorApp1\Shared\BlazorApp1.Data.csproj", "{2C713169-5AAB-44D0-8C38-AE42945302F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp1.Domain", "BlazorApp1.Data\BlazorApp1.Domain.csproj", "{5C6FF547-B5CD-4F08-A3BD-CBDB738C2833}"
 EndProject

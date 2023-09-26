@@ -1,4 +1,4 @@
-using BlazorApp1.Shared;
+using BlazorApp1.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,7 +44,7 @@ static void InitializeDatabase(WebApplication app)
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
-      //  db.Database.Migrate();
+        db.Database.Migrate();
     }
 }
 

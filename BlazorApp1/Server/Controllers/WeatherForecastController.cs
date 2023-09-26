@@ -1,5 +1,5 @@
+using BlazorApp1.Data;
 using BlazorApp1.Domain;
-using BlazorApp1.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorApp1.Server.Controllers

@@ -1,7 +1,7 @@
 ﻿using BlazorApp1.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlazorApp1.Shared
+namespace BlazorApp1.Data
 {
     public class WeatherDbContext : DbContext
     {

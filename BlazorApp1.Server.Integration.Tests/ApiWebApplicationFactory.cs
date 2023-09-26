@@ -1,28 +1,35 @@
-﻿using BlazorApp1.Shared;
+﻿using BlazorApp1.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Data.Common;
 
 namespace BlazorApp1.Server.Integration.Tests
 {
     public class ApiWebApplicationFactory : WebApplicationFactory<Program>
     {
-        private SqliteConnection _connection;
-
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            // Is be called after the `ConfigureServices` from the Startup
-            // which allows you to overwrite the DI with mocked instances
-            // Create and open a connection. This creates the SQLite in-memory database, which will persist until the connection is closed
-            // at the end of the test (see Dispose below).
-            _connection = new SqliteConnection("Filename=:memory:");
-            _connection.Open();
-
             builder.ConfigureTestServices(services =>
             {
+                var dbConnectionDescriptor = services.SingleOrDefault(
+                    d => d.ServiceType ==
+                        typeof(DbConnection));
+
+                services.Remove(dbConnectionDescriptor);
+
+                // Create open SqliteConnection so EF won't automatically close it.
+                services.AddSingleton<DbConnection>(container =>
+                {
+                    var connection = new SqliteConnection("DataSource=:memory:");
+                    connection.Open();
+
+                    return connection;
+                });
+
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
                     typeof(DbContextOptions<WeatherDbContext>));
@@ -31,14 +38,13 @@ namespace BlazorApp1.Server.Integration.Tests
                 {
                     services.Remove(descriptor);
                 }
-                services.AddDbContext<WeatherDbContext>(options => options.UseSqlite(_connection));
+  
+                services.AddDbContext<WeatherDbContext>((container, options) =>
+                {
+                    var connection = container.GetRequiredService<DbConnection>();
+                    options.UseSqlite(connection);
+                });
             });
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            _connection.Dispose();
         }
     }
 }
