@@ -7,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<WeatherDbContext>();
+
+builder.Services.AddWeatherForecastDataLayer();
 
 var app = builder.Build();
 
