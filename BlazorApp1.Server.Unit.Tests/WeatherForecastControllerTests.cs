@@ -26,16 +26,16 @@ public class WeatherForecastControllerTests
         _mapper = servicesCollection.GetRequiredService<IMapper>();
     }
 
-    [Fact]
-    public async Task Get_ShouldReturnAllForecasts()
-    {
-        // Arrange
-        var forecasts = new List<WeatherForecast>
+        [Fact]
+        public async Task Get_ShouldReturnAllForecasts()
         {
-            new WeatherForecast(default, default, default, null) { Date = DateTime.Today, TemperatureC = 20, Summary = "Sunny" },
-            new WeatherForecast(default, default, default, null) { Date = DateTime.Today.AddDays(1), TemperatureC = 15, Summary = "Cloudy" }
-        };
-        _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).ReturnsAsync(forecasts);
+            // Arrange
+            var forecasts = new List<WeatherForecast>
+            {
+                new WeatherForecast { Date = DateTime.Today, TemperatureC = 20, Summary = "Sunny" },
+                new WeatherForecast { Date = DateTime.Today.AddDays(1), TemperatureC = 15, Summary = "Cloudy" }
+            };
+            _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).ReturnsAsync(forecasts);
 
         var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
 
@@ -81,12 +81,12 @@ public class WeatherForecastControllerTests
         _weatherForecastRepositoryMock.Verify(x => x.GetAllForecasts(), Times.Once);
     }
 
-    [Fact]
-    public async Task AddForecast_ShouldCallRepository()
-    {
-        // Arrange
-        var forecast = new WeatherForecast(default, default, default, null) { Date = DateTime.Today, TemperatureC = 25, Summary = "Hot" };
-        _weatherForecastRepositoryMock.Setup(x => x.AddWeatherForecast(forecast)).Returns(Task.CompletedTask);
+        [Fact]
+        public async Task AddForecast_ShouldCallRepository()
+        {
+            // Arrange
+            var forecast = new WeatherForecast { Date = DateTime.Today, TemperatureC = 25, Summary = "Hot" };
+            _weatherForecastRepositoryMock.Setup(x => x.AddWeatherForecast(forecast)).Returns(Task.CompletedTask);
 
         var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
 

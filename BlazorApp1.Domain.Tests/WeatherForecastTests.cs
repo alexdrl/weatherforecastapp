@@ -6,7 +6,7 @@ public class WeatherForecastTests
     public void TemperatureF_ConversionIsCorrect()
     {
         // Arrange
-        var weatherForecast = new WeatherForecast(default, default, default, null)
+        var weatherForecast = new WeatherForecast
         {
             TemperatureC = 25
         };
@@ -22,7 +22,7 @@ public class WeatherForecastTests
     public void TemperatureF_ConversionIsCorrectWithNegativeCelsius()
     {
         // Arrange
-        var weatherForecast = new WeatherForecast(default, default, default, null)
+        var weatherForecast = new WeatherForecast
         {
             TemperatureC = -10
         };

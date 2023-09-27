@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BlazorApp1.Server.Abstractions\BlazorApp1.Server.Abstractions.csproj" />
     <ProjectReference Include="..\Shared\BlazorApp1.Data.csproj" />
   </ItemGroup>
 
