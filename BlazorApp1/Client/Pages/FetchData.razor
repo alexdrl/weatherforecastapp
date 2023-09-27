@@ -44,6 +44,29 @@ else
         <InputNumber @bind-Value="forecastToAdd!.TemperatureC"></InputNumber>
         <button type="submit">Submit</button>
     </EditForm>
+
+    <table class="table">
+        Day Averages
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecastGroup in forecasts.GroupBy(x => DateOnly.FromDateTime(x.Date)))
+            {
+                <tr>
+                    <td>@forecastGroup.Key.ToShortDateString()</td>
+                    <td>@forecastGroup.Average(x => x.TemperatureC)</td>
+                    <td>@forecastGroup.Average(x => x.TemperatureF)</td>
+                    <td>@string.Join(", ", @forecastGroup.Select(x => x.Summary).Distinct())</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
