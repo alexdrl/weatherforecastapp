@@ -1,4 +1,3 @@
-using AutoMapper;
 using BlazorApp1.Data;
 using BlazorApp1.Server.Profiles;
 using Microsoft.EntityFrameworkCore;
@@ -46,21 +45,17 @@ app.Run();
 
 static void InitializeDatabase(WebApplication app)
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        var db = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
-        db.Database.Migrate();
-    }
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
+    db.Database.Migrate();
 }
 
 static void InitializeAutoMapper(WebApplication app)
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        var mapperConfiguration = scope.ServiceProvider.GetRequiredService<AutoMapper.IConfigurationProvider>();
-        mapperConfiguration.AssertConfigurationIsValid();
-        mapperConfiguration.CompileMappings();
-    }
+    using var scope = app.Services.CreateScope();
+    var mapperConfiguration = scope.ServiceProvider.GetRequiredService<AutoMapper.IConfigurationProvider>();
+    mapperConfiguration.AssertConfigurationIsValid();
+    mapperConfiguration.CompileMappings();
 }
 
 public partial class Program

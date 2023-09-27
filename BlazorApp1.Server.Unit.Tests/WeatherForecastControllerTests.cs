@@ -7,96 +7,95 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace BlazorApp1.Server.Unit.Tests
+namespace BlazorApp1.Server.Unit.Tests;
+
+public class WeatherForecastControllerTests
 {
-    public class WeatherForecastControllerTests
+    private readonly Mock<ILogger<WeatherForecastController>> _loggerMock;
+    private readonly Mock<IWeatherForecastRepository> _weatherForecastRepositoryMock;
+    private readonly IMapper _mapper;
+
+    public WeatherForecastControllerTests()
     {
-        private readonly Mock<ILogger<WeatherForecastController>> _loggerMock;
-        private readonly Mock<IWeatherForecastRepository> _weatherForecastRepositoryMock;
-        private IMapper _mapper;
+        _loggerMock = new Mock<ILogger<WeatherForecastController>>();
+        _weatherForecastRepositoryMock = new Mock<IWeatherForecastRepository>();
 
-        public WeatherForecastControllerTests()
+        var services = new ServiceCollection();
+        services.AddAutoMapper(typeof(WeatherForecastController).Assembly);
+        var servicesCollection = services.BuildServiceProvider();
+        _mapper = servicesCollection.GetRequiredService<IMapper>();
+    }
+
+    [Fact]
+    public async Task Get_ShouldReturnAllForecasts()
+    {
+        // Arrange
+        var forecasts = new List<WeatherForecast>
         {
-            _loggerMock = new Mock<ILogger<WeatherForecastController>>();
-            _weatherForecastRepositoryMock = new Mock<IWeatherForecastRepository>();
+            new WeatherForecast(default, default, default, null) { Date = DateTime.Today, TemperatureC = 20, Summary = "Sunny" },
+            new WeatherForecast(default, default, default, null) { Date = DateTime.Today.AddDays(1), TemperatureC = 15, Summary = "Cloudy" }
+        };
+        _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).ReturnsAsync(forecasts);
 
-            var services = new ServiceCollection();
-            services.AddAutoMapper(typeof(WeatherForecastController).Assembly);
-            var servicesCollection = services.BuildServiceProvider();
-            _mapper = servicesCollection.GetRequiredService<IMapper>();
-        }
+        var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
 
-        [Fact]
-        public async Task Get_ShouldReturnAllForecasts()
-        {
-            // Arrange
-            var forecasts = new List<WeatherForecast>
-            {
-                new WeatherForecast(default, default, default, null) { Date = DateTime.Today, TemperatureC = 20, Summary = "Sunny" },
-                new WeatherForecast(default, default, default, null) { Date = DateTime.Today.AddDays(1), TemperatureC = 15, Summary = "Cloudy" }
-            };
-            _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).ReturnsAsync(forecasts);
+        // Act
+        var result = await controller.Get();
 
-            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
+        // Assert
+        result.Should().BeEquivalentTo(_mapper.Map<IEnumerable<WeatherForecastDto>>(forecasts));
+        _weatherForecastRepositoryMock.Verify(x => x.GetAllForecasts(), Times.Once);
+    }
 
-            // Act
-            var result = await controller.Get();
+    [Fact]
+    public async Task Get_ShouldReturnEmptyListWhenNoForecasts()
+    {
+        // Arrange
+        var forecasts = new List<WeatherForecast>();
+        _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).ReturnsAsync(forecasts);
 
-            // Assert
-            result.Should().BeEquivalentTo(_mapper.Map<IEnumerable<WeatherForecastDto>>(forecasts));
-            _weatherForecastRepositoryMock.Verify(x => x.GetAllForecasts(), Times.Once);
-        }
+        var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
 
-        [Fact]
-        public async Task Get_ShouldReturnEmptyListWhenNoForecasts()
-        {
-            // Arrange
-            var forecasts = new List<WeatherForecast>();
-            _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).ReturnsAsync(forecasts);
+        // Act
+        var result = await controller.Get();
 
-            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
+        // Assert
+        result.Should().BeEmpty();
+        _weatherForecastRepositoryMock.Verify(x => x.GetAllForecasts(), Times.Once);
+    }
 
-            // Act
-            var result = await controller.Get();
+    [Fact]
+    public async Task Get_ShouldReturnExceptionWhenException()
+    {
+        // Arrange
+        var forecasts = new List<WeatherForecast>();
+        _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).Throws(new Exception());
 
-            // Assert
-            result.Should().BeEmpty();
-            _weatherForecastRepositoryMock.Verify(x => x.GetAllForecasts(), Times.Once);
-        }
+        var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
 
-        [Fact]
-        public async Task Get_ShouldReturnExceptionWhenException()
-        {
-            // Arrange
-            var forecasts = new List<WeatherForecast>();
-            _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).Throws(new Exception());
+        // Act
+        var result = async () => await controller.Get();
 
-            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
+        // Assert
+        await result.Should().ThrowAsync<Exception>();
+        _weatherForecastRepositoryMock.Verify(x => x.GetAllForecasts(), Times.Once);
+    }
 
-            // Act
-            var result = async () => await controller.Get();
+    [Fact]
+    public async Task AddForecast_ShouldCallRepository()
+    {
+        // Arrange
+        var forecast = new WeatherForecast(default, default, default, null) { Date = DateTime.Today, TemperatureC = 25, Summary = "Hot" };
+        _weatherForecastRepositoryMock.Setup(x => x.AddWeatherForecast(forecast)).Returns(Task.CompletedTask);
 
-            // Assert
-            await result.Should().ThrowAsync<Exception>();
-            _weatherForecastRepositoryMock.Verify(x => x.GetAllForecasts(), Times.Once);
-        }
+        var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
 
-        [Fact]
-        public async Task AddForecast_ShouldCallRepository()
-        {
-            // Arrange
-            var forecast = new WeatherForecast(default, default, default, null) { Date = DateTime.Today, TemperatureC = 25, Summary = "Hot" };
-            _weatherForecastRepositoryMock.Setup(x => x.AddWeatherForecast(forecast)).Returns(Task.CompletedTask);
+        // Act
+        var forecastDto = new WeatherForecastDto { Date = DateTime.Today, TemperatureC = 25, Summary = "Hot" };
 
-            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
+        await controller.AddForecast(forecastDto);
 
-            // Act
-            var forecastDto = new WeatherForecastDto { Date = DateTime.Today, TemperatureC = 25, Summary = "Hot" };
-
-            await controller.AddForecast(forecastDto);
-
-            // Assert
-            _weatherForecastRepositoryMock.Verify(x => x.AddWeatherForecast(It.IsAny<WeatherForecast>()), Times.Once);
-        }
+        // Assert
+        _weatherForecastRepositoryMock.Verify(x => x.AddWeatherForecast(It.IsAny<WeatherForecast>()), Times.Once);
     }
 }

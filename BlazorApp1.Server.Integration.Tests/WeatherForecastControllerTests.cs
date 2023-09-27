@@ -6,82 +6,77 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 
-namespace BlazorApp1.Server.Integration.Tests
+namespace BlazorApp1.Server.Integration.Tests;
+
+public class WeatherForecastControllerTests /*: IClassFixture<ApiWebApplicationFactory>*/
 {
-    public class WeatherForecastControllerTests /*: IClassFixture<ApiWebApplicationFactory>*/
+    private readonly ApiWebApplicationFactory _factory;
+    private readonly HttpClient _client;
+
+    private static readonly string[] Summaries = new[]
     {
-        private readonly ApiWebApplicationFactory _factory;
-        private readonly HttpClient _client;
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+     };
+    private readonly IMapper? _mapper;
 
-        private static readonly string[] Summaries = new[]
+    public WeatherForecastControllerTests()
+    {
+        _factory = new ApiWebApplicationFactory();
+        _client = _factory.CreateClient();
+
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
+        dbContext.Database.EnsureCreated();
+        _mapper = scope.ServiceProvider.GetService<IMapper>();
+    }
+
+    [Fact]
+    public async Task Get_ReturnsWeatherForecasts()
+    {
+        // Arrange
+        var databaseForecasts = new WeatherForecast[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-         };
-        private readonly IMapper? _mapper;
+            new WeatherForecast(default, DateTime.Now.AddDays(-1), 20, null) { Summary = "Sunny" },
+            new WeatherForecast(default, DateTime.Now, 25, null) { Summary = "Cloudy" },
+            new WeatherForecast(default, DateTime.Now.AddDays(1), 30, null) { Summary = "Rainy" }
+        };
 
-        public WeatherForecastControllerTests()
+        using (var scope = _factory.Services.CreateScope())
         {
-            _factory = new ApiWebApplicationFactory();
-            _client = _factory.CreateClient();
-
-            using (var scope = _factory.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
-                dbContext.Database.EnsureCreated();
-                _mapper = scope.ServiceProvider.GetService<IMapper>();
-            }
+            var dbContext = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
+            dbContext.Forecast.AddRange(databaseForecasts);
+            await dbContext.SaveChangesAsync();
         }
 
-        [Fact]
-        public async Task Get_ReturnsWeatherForecasts()
+        // Act
+        var response = await _client.GetAsync("/WeatherForecast");
+        response.EnsureSuccessStatusCode();
+        var actualForecasts = await response.Content.ReadFromJsonAsync<IEnumerable<WeatherForecastDto>>();
+
+        // Assert
+        using (var scope = _factory.Services.CreateScope())
         {
-            // Arrange
-            var databaseForecasts = new WeatherForecast[]
-            {
-                new WeatherForecast(default, DateTime.Now.AddDays(-1), 20, null) { Summary = "Sunny" },
-                new WeatherForecast(default, DateTime.Now, 25, null) { Summary = "Cloudy" },
-                new WeatherForecast(default, DateTime.Now.AddDays(1), 30, null) { Summary = "Rainy" }
-            };
+            var dbContext = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
 
-            using (var scope = _factory.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
-                dbContext.Forecast.AddRange(databaseForecasts);
-                await dbContext.SaveChangesAsync();
-            }
-
-            // Act
-            var response = await _client.GetAsync("/WeatherForecast");
-            response.EnsureSuccessStatusCode();
-            var actualForecasts = await response.Content.ReadFromJsonAsync<IEnumerable<WeatherForecastDto>>();
-
-            // Assert
-            using (var scope = _factory.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
-
-                var expectedForecasts = _mapper?.Map<IEnumerable<WeatherForecastDto>>(dbContext.Forecast);
-                actualForecasts.Should().BeEquivalentTo(expectedForecasts);
-            }
+            var expectedForecasts = _mapper?.Map<IEnumerable<WeatherForecastDto>>(dbContext.Forecast);
+            actualForecasts.Should().BeEquivalentTo(expectedForecasts);
         }
+    }
 
-        [Fact]
-        public async Task Post_AddsWeatherForecast()
-        {
-            // Arrange
-            var newForecast = new WeatherForecastDto { Date = DateTime.Now.AddDays(2), TemperatureC = 35, Summary = "Hot", TemperatureF = 95 };
+    [Fact]
+    public async Task Post_AddsWeatherForecast()
+    {
+        // Arrange
+        var newForecast = new WeatherForecastDto { Date = DateTime.Now.AddDays(2), TemperatureC = 35, Summary = "Hot", TemperatureF = 95 };
 
-            // Act
-            var response = await _client.PostAsJsonAsync("/WeatherForecast", newForecast);
-            response.EnsureSuccessStatusCode();
+        // Act
+        var response = await _client.PostAsJsonAsync("/WeatherForecast", newForecast);
+        response.EnsureSuccessStatusCode();
 
-            // Assert
-            using (var scope = _factory.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
-                var actualForecast = await dbContext.Forecast.OrderBy(x => x.Id).LastAsync();
-                newForecast.Should().BeEquivalentTo(actualForecast, x => x.Excluding(y => y.Id));
-            }
-        }
+        // Assert
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
+        var actualForecast = await dbContext.Forecast.OrderBy(x => x.Id).LastAsync();
+        newForecast.Should().BeEquivalentTo(actualForecast, x => x.Excluding(y => y.Id));
     }
 }

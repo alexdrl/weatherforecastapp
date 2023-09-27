@@ -1,37 +1,36 @@
-namespace BlazorApp1.Domain.Tests
+namespace BlazorApp1.Domain.Tests;
+
+public class WeatherForecastTests
 {
-    public class WeatherForecastTests
+    [Fact]
+    public void TemperatureF_ConversionIsCorrect()
     {
-        [Fact]
-        public void TemperatureF_ConversionIsCorrect()
+        // Arrange
+        var weatherForecast = new WeatherForecast(default, default, default, null)
         {
-            // Arrange
-            var weatherForecast = new WeatherForecast(default, default, default, null)
-            {
-                TemperatureC = 25
-            };
+            TemperatureC = 25
+        };
 
-            // Act
-            int temperatureF = weatherForecast.TemperatureF;
+        // Act
+        int temperatureF = weatherForecast.TemperatureF;
 
-            // Assert
-            temperatureF.Should().Be(77);
-        }
+        // Assert
+        temperatureF.Should().Be(77);
+    }
 
-        [Fact]
-        public void TemperatureF_ConversionIsCorrectWithNegativeCelsius()
+    [Fact]
+    public void TemperatureF_ConversionIsCorrectWithNegativeCelsius()
+    {
+        // Arrange
+        var weatherForecast = new WeatherForecast(default, default, default, null)
         {
-            // Arrange
-            var weatherForecast = new WeatherForecast(default, default, default, null)
-            {
-                TemperatureC = -10
-            };
+            TemperatureC = -10
+        };
 
-            // Act
-            int temperatureF = weatherForecast.TemperatureF;
+        // Act
+        int temperatureF = weatherForecast.TemperatureF;
 
-            // Assert
-            temperatureF.Should().Be(14);
-        }
+        // Assert
+        temperatureF.Should().Be(14);
     }
 }
