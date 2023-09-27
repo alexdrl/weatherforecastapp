@@ -61,7 +61,10 @@ else
 
     private async Task AddForecast()
     {
-        var response = await Http.PostAsJsonAsync<WeatherForecast>("WeatherForecast", forecastToAdd);
+        if (forecastToAdd != null)
+        {
+            var response = await Http.PostAsJsonAsync<WeatherForecast>("WeatherForecast", forecastToAdd);
+        }
 
         await ReloadDataAsync();
     }
