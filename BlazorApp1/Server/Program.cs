@@ -1,4 +1,6 @@
+using AutoMapper;
 using BlazorApp1.Data;
+using BlazorApp1.Server.Profiles;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,10 +11,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddWeatherForecastDataLayer();
+builder.Services.AddAutoMapper(typeof(WeatherForecastProfile).Assembly);
 
 var app = builder.Build();
 
 InitializeDatabase(app);
+InitializeAutoMapper(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -46,6 +50,16 @@ static void InitializeDatabase(WebApplication app)
     {
         var db = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
         db.Database.Migrate();
+    }
+}
+
+static void InitializeAutoMapper(WebApplication app)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var mapperConfiguration = scope.ServiceProvider.GetRequiredService<AutoMapper.IConfigurationProvider>();
+        mapperConfiguration.AssertConfigurationIsValid();
+        mapperConfiguration.CompileMappings();
     }
 }
 

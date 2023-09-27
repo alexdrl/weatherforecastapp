@@ -1,0 +1,1 @@
+ docker push private-registry.alexdrl.com/alexdrl/weatherforecastapp:0.1-aot

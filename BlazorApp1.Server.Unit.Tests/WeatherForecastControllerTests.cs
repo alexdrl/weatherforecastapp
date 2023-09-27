@@ -1,6 +1,9 @@
+using AutoMapper;
 using BlazorApp1.Data.Abstractions.Repositories;
 using BlazorApp1.Domain;
+using BlazorApp1.Server.Abstractions.Contracts;
 using BlazorApp1.Server.Controllers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -10,11 +13,17 @@ namespace BlazorApp1.Server.Unit.Tests
     {
         private readonly Mock<ILogger<WeatherForecastController>> _loggerMock;
         private readonly Mock<IWeatherForecastRepository> _weatherForecastRepositoryMock;
+        private IMapper _mapper;
 
         public WeatherForecastControllerTests()
         {
             _loggerMock = new Mock<ILogger<WeatherForecastController>>();
             _weatherForecastRepositoryMock = new Mock<IWeatherForecastRepository>();
+
+            var services = new ServiceCollection();
+            services.AddAutoMapper(typeof(WeatherForecastController).Assembly);
+            var servicesCollection = services.BuildServiceProvider();
+            _mapper = servicesCollection.GetRequiredService<IMapper>();
         }
 
         [Fact]
@@ -28,13 +37,13 @@ namespace BlazorApp1.Server.Unit.Tests
             };
             _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).ReturnsAsync(forecasts);
 
-            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object);
+            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
 
             // Act
             var result = await controller.Get();
 
             // Assert
-            result.Should().BeEquivalentTo(forecasts);
+            result.Should().BeEquivalentTo(_mapper.Map<IEnumerable<WeatherForecastDto>>(forecasts));
             _weatherForecastRepositoryMock.Verify(x => x.GetAllForecasts(), Times.Once);
         }
 
@@ -45,7 +54,7 @@ namespace BlazorApp1.Server.Unit.Tests
             var forecasts = new List<WeatherForecast>();
             _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).ReturnsAsync(forecasts);
 
-            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object);
+            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
 
             // Act
             var result = await controller.Get();
@@ -62,7 +71,7 @@ namespace BlazorApp1.Server.Unit.Tests
             var forecasts = new List<WeatherForecast>();
             _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).Throws(new Exception());
 
-            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object);
+            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
 
             // Act
             var result = async () => await controller.Get();
@@ -79,13 +88,15 @@ namespace BlazorApp1.Server.Unit.Tests
             var forecast = new WeatherForecast { Date = DateTime.Today, TemperatureC = 25, Summary = "Hot" };
             _weatherForecastRepositoryMock.Setup(x => x.AddWeatherForecast(forecast)).Returns(Task.CompletedTask);
 
-            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object);
+            var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);
 
             // Act
-            await controller.AddForecast(forecast);
+            var forecastDto = new WeatherForecastDto { Date = DateTime.Today, TemperatureC = 25, Summary = "Hot" };
+
+            await controller.AddForecast(forecastDto);
 
             // Assert
-            _weatherForecastRepositoryMock.Verify(x => x.AddWeatherForecast(forecast), Times.Once);
+            _weatherForecastRepositoryMock.Verify(x => x.AddWeatherForecast(It.IsAny<WeatherForecast>()), Times.Once);
         }
     }
 }

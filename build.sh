@@ -1,0 +1,1 @@
+docker build . -f ./BlazorApp1/Server/Dockerfile -t private-registry.alexdrl.com/alexdrl/weatherforecastapp:0.1-aot
