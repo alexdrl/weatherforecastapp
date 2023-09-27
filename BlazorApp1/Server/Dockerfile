@@ -15,8 +15,8 @@ COPY ["BlazorApp1.Data/BlazorApp1.Domain.csproj", "BlazorApp1.Data/"]
 #RUN dotnet restore "BlazorApp1/Server/BlazorApp1.Server.csproj"
 COPY . .
 WORKDIR "/src/BlazorApp1/Server"
-RUN apt-get update
-RUN apt-get install -y python3
+#RUN apt-get update
+#RUN apt-get install -y python3
 RUN dotnet build "BlazorApp1.Server.csproj" -c Release -o /app/build
 
 FROM build AS publish
