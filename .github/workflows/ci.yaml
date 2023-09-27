@@ -1,0 +1,23 @@
+name: Build and publish Docker image
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: docker build . --file BlazorApp1/Server/Dockerfile --tag ghcr.io/${{ github.actor }}/weatherforecastapp:${{ github.sha }}
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v1 
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push the Docker image
+        run: docker push ghcr.io/${{ github.actor }}/weatherforecastapp:${{ github.sha }}
