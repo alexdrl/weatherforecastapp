@@ -32,8 +32,8 @@ namespace BlazorApp1.Server.Unit.Tests
             // Arrange
             var forecasts = new List<WeatherForecast>
             {
-                new WeatherForecast { Date = DateTime.Today, TemperatureC = 20, Summary = "Sunny" },
-                new WeatherForecast { Date = DateTime.Today.AddDays(1), TemperatureC = 15, Summary = "Cloudy" }
+                new WeatherForecast(default, default, default, null) { Date = DateTime.Today, TemperatureC = 20, Summary = "Sunny" },
+                new WeatherForecast(default, default, default, null) { Date = DateTime.Today.AddDays(1), TemperatureC = 15, Summary = "Cloudy" }
             };
             _weatherForecastRepositoryMock.Setup(x => x.GetAllForecasts()).ReturnsAsync(forecasts);
 
@@ -85,7 +85,7 @@ namespace BlazorApp1.Server.Unit.Tests
         public async Task AddForecast_ShouldCallRepository()
         {
             // Arrange
-            var forecast = new WeatherForecast { Date = DateTime.Today, TemperatureC = 25, Summary = "Hot" };
+            var forecast = new WeatherForecast(default, default, default, null) { Date = DateTime.Today, TemperatureC = 25, Summary = "Hot" };
             _weatherForecastRepositoryMock.Setup(x => x.AddWeatherForecast(forecast)).Returns(Task.CompletedTask);
 
             var controller = new WeatherForecastController(_loggerMock.Object, _weatherForecastRepositoryMock.Object, _mapper);

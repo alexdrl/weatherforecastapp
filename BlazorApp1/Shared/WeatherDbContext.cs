@@ -25,7 +25,7 @@ namespace BlazorApp1.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<WeatherForecast>().HasData(Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            modelBuilder.Entity<WeatherForecast>().HasData(Enumerable.Range(1, 5).Select(index => new WeatherForecast(default, default, default, null)
             {
                 Id = index,
                 Date = new DateTime(2022, 1, 1).AddDays(index),

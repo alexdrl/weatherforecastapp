@@ -1,6 +1,3 @@
-using FluentAssertions;
-using Xunit;
-
 namespace BlazorApp1.Domain.Tests
 {
     public class WeatherForecastTests
@@ -9,7 +6,7 @@ namespace BlazorApp1.Domain.Tests
         public void TemperatureF_ConversionIsCorrect()
         {
             // Arrange
-            var weatherForecast = new WeatherForecast
+            var weatherForecast = new WeatherForecast(default, default, default, null)
             {
                 TemperatureC = 25
             };
@@ -25,7 +22,7 @@ namespace BlazorApp1.Domain.Tests
         public void TemperatureF_ConversionIsCorrectWithNegativeCelsius()
         {
             // Arrange
-            var weatherForecast = new WeatherForecast
+            var weatherForecast = new WeatherForecast(default, default, default, null)
             {
                 TemperatureC = -10
             };

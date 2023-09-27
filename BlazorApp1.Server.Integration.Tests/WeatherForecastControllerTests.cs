@@ -38,9 +38,9 @@ namespace BlazorApp1.Server.Integration.Tests
             // Arrange
             var databaseForecasts = new WeatherForecast[]
             {
-                new WeatherForecast { Date = DateTime.Now.AddDays(-1), TemperatureC = 20, Summary = "Sunny" },
-                new WeatherForecast { Date = DateTime.Now, TemperatureC = 25, Summary = "Cloudy" },
-                new WeatherForecast { Date = DateTime.Now.AddDays(1), TemperatureC = 30, Summary = "Rainy" }
+                new WeatherForecast(default, DateTime.Now.AddDays(-1), 20, null) { Summary = "Sunny" },
+                new WeatherForecast(default, DateTime.Now, 25, null) { Summary = "Cloudy" },
+                new WeatherForecast(default, DateTime.Now.AddDays(1), 30, null) { Summary = "Rainy" }
             };
 
             using (var scope = _factory.Services.CreateScope())

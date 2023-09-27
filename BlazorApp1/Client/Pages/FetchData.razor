@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
 @using BlazorApp1.Shared
 @using BlazorApp1.Domain
+@using BlazorApp1.Server.Abstractions.Contracts
 @inject HttpClient Http
 
 <PageTitle>Weather forecast</PageTitle>
@@ -47,14 +48,14 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
-    private WeatherForecast? forecastToAdd;
+    private WeatherForecastDto[]? forecasts;
+    private WeatherForecastDto? forecastToAdd;
 
     protected override async Task OnInitializedAsync()
     {
         await ReloadDataAsync();
-        forecastToAdd = new WeatherForecast
-            {
+        forecastToAdd = new WeatherForecastDto
+        {
                 Date = DateTime.Now
             };
     }
@@ -63,7 +64,7 @@ else
     {
         if (forecastToAdd != null)
         {
-            var response = await Http.PostAsJsonAsync<WeatherForecast>("WeatherForecast", forecastToAdd);
+            var response = await Http.PostAsJsonAsync<WeatherForecastDto>("WeatherForecast", forecastToAdd);
         }
 
         await ReloadDataAsync();
@@ -71,6 +72,6 @@ else
 
     private async Task ReloadDataAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+        forecasts = await Http.GetFromJsonAsync<WeatherForecastDto[]>("WeatherForecast");
     }
 }
