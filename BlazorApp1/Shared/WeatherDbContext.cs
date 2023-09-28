@@ -23,18 +23,23 @@ public class WeatherDbContext : DbContext
         optionsBuilder.UseSqlite("Data Source=Local.sqlite");
     }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<WeatherForecast>().HasData(Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
-            modelBuilder.Entity<WeatherForecast>().HasData(Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Id = index,
-                Date = new DateTime(2022, 1, 1).AddDays(index),
-                TemperatureC = 4 + index,
-                Summary = Summaries[1 + index]
-            })
-            .ToArray());
-        }
+            Id = index,
+            Date = new DateTime(2022, 1, 1).AddDays(index),
+            TemperatureC = 4 + index,
+            Summary = Summaries[1 + index]
+        })
+        .ToArray());
+
+        modelBuilder.Entity<WeatherForecastSummary>()
+            .HasIndex(x => x.Date).IsUnique();
+    }
 
     public DbSet<WeatherForecast> Forecast { get; set; }
+
+    public DbSet<WeatherForecastSummary> ForecastSummaries { get; set; }
 
 }
