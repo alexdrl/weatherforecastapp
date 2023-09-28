@@ -14,7 +14,7 @@ builder.Services.AddAutoMapper(typeof(WeatherForecastProfile).Assembly);
 
 var app = builder.Build();
 
-InitializeDatabase(app);
+await InitializeDatabase(app);
 InitializeAutoMapper(app);
 
 // Configure the HTTP request pipeline.
@@ -43,11 +43,11 @@ app.MapFallbackToFile("index.html");
 
 app.Run();
 
-static void InitializeDatabase(WebApplication app)
+static async Task InitializeDatabase(WebApplication app)
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
-    db.Database.Migrate();
+    await db.Database.MigrateAsync();
 }
 
 static void InitializeAutoMapper(WebApplication app)
