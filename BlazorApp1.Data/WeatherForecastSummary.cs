@@ -3,15 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlazorApp1.Domain;
 
-public class WeatherForecastSummary
+public record WeatherForecastSummary([property: Key][property: DatabaseGenerated(DatabaseGeneratedOption.Identity)] int Id, DateOnly Date, int TemperatureC)
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
-
-    public DateOnly Date { get; set; }
-
-    public int TemperatureC { get; set; }
-
     public int TemperatureF => 32 + (int)Math.Round(TemperatureC / 0.5556, 0);
 }

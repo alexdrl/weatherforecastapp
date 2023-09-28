@@ -50,19 +50,17 @@ else
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>Avg Temp. (C)</th>
+                <th>Avg Temp. (F)</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecastGroup in forecasts.GroupBy(x => DateOnly.FromDateTime(x.Date)))
+            @foreach (var forecastSummary in forecastSummaries)
             {
                 <tr>
-                    <td>@forecastGroup.Key.ToShortDateString()</td>
-                    <td>@forecastGroup.Average(x => x.TemperatureC)</td>
-                    <td>@forecastGroup.Average(x => x.TemperatureF)</td>
-                    <td>@string.Join(", ", @forecastGroup.Select(x => x.Summary).Distinct())</td>
+                    <td>@forecastSummary.Date.ToShortDateString()</td>
+                    <td>@forecastSummary.TemperatureC</td>
+                    <td>@forecastSummary.TemperatureF</td>
                 </tr>
             }
         </tbody>
@@ -71,6 +69,7 @@ else
 
 @code {
     private WeatherForecast[]? forecasts;
+    private WeatherForecastSummary[]? forecastSummaries;
     private WeatherForecast? forecastToAdd;
 
     protected override async Task OnInitializedAsync()
@@ -95,5 +94,6 @@ else
     private async Task ReloadDataAsync()
     {
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+        forecastSummaries = await Http.GetFromJsonAsync<WeatherForecastSummary[]>("WeatherForecastSummary");
     }
 }

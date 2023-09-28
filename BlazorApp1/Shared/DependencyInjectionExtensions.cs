@@ -18,6 +18,7 @@ public static class DependencyInjectionExtensions
 
         services.AddDbContext<WeatherDbContext>(optionsBuilder => optionsBuilder.UseSqlite($"Data Source={filePath}"));
         services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
+        services.AddScoped<IWeatherForecastSummaryRepository, WeatherForecastSummaryRepository>();
 
         return services;
     }

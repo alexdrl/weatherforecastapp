@@ -34,7 +34,7 @@ namespace BlazorApp1.Shared.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Forecast");
+                    b.ToTable("Forecast", (string)null);
 
                     b.HasData(
                         new
@@ -91,7 +91,7 @@ namespace BlazorApp1.Shared.Migrations
                     b.HasIndex("Date")
                         .IsUnique();
 
-                    b.ToTable("ForecastSummaries");
+                    b.ToTable("ForecastSummaries", (string)null);
                 });
 #pragma warning restore 612, 618
         }
