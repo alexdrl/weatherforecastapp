@@ -71,6 +71,7 @@ else
     private WeatherForecast[]? forecasts;
     private WeatherForecastSummary[]? forecastSummaries;
     private WeatherForecast? forecastToAdd;
+    private static System.Timers.Timer _timer;
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,8 +80,21 @@ else
             {
                 Date = DateTime.Now
             };
+
+        _timer = new System.Timers.Timer(5000);
+        _timer.Elapsed += CountDownTimer;
+        _timer.Enabled = true;
     }
 
+    public async void CountDownTimer(Object source, System.Timers.ElapsedEventArgs e)
+    {
+        forecastSummaries = await Http.GetFromJsonAsync<WeatherForecastSummary[]>("WeatherForecastSummary");
+
+        await InvokeAsync(async () =>
+        {
+            StateHasChanged();
+        });
+    }
     private async Task AddForecast()
     {
         if (forecastToAdd != null)

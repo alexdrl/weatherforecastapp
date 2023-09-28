@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -18,9 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\BlazorApp1.Application\BlazorApp1.Application.csproj" />
     <ProjectReference Include="..\..\BlazorApp1.Server.Abstractions\BlazorApp1.Server.Abstractions.csproj" />
     <ProjectReference Include="..\Client\BlazorApp1.Client.csproj" />
-    <ProjectReference Include="..\Shared\BlazorApp1.Data.csproj" />
   </ItemGroup>
 
 

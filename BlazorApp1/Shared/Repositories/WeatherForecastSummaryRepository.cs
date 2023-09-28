@@ -20,8 +20,18 @@ public class WeatherForecastSummaryRepository : IWeatherForecastSummaryRepositor
         await _weatherDbContext.SaveChangesAsync();
     }
 
+    public async Task UpdateWeatherForecastSummary(WeatherForecastSummary weatherForecastSummary)
+    {
+        await _weatherDbContext.SaveChangesAsync();
+    }
+
     public async Task<IEnumerable<WeatherForecastSummary>> GetAllForecastSummaries()
     {
         return await _weatherDbContext.ForecastSummaries.OrderByDescending(x => x.Date).ToListAsync();
+    }
+
+    public async Task<WeatherForecastSummary?> GetForecastSummaryByDate(DateOnly date)
+    {
+        return await _weatherDbContext.ForecastSummaries.FirstOrDefaultAsync(x => x.Date == date);
     }
 }

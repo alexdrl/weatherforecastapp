@@ -1,4 +1,6 @@
+using BlazorApp1.Application;
 using BlazorApp1.Data;
+using BlazorApp1.Server.BackgroundServices;
 using BlazorApp1.Server.Profiles;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +12,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddWeatherForecastDataLayer();
+builder.Services.AddWeatherForecastApplicationLayer(builder.Configuration);
+
 builder.Services.AddAutoMapper(typeof(WeatherForecastProfile).Assembly);
+
+builder.Services.AddHostedService<QueuedHostedService>();
 
 var app = builder.Build();
 
