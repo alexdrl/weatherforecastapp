@@ -1,5 +1,5 @@
-﻿using BlazorApp1.Data.Abstractions.Repositories;
-using BlazorApp1.Data.Repositories;
+﻿using BlazorApp1.Data.Repositories;
+using BlazorApp1.Domain.Abstractions.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

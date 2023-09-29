@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BlazorApp1.Application.Queue;
-using BlazorApp1.Data.Abstractions.Repositories;
 using BlazorApp1.Domain;
+using BlazorApp1.Domain.Abstractions.Repositories;
 using BlazorApp1.Server.Abstractions.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

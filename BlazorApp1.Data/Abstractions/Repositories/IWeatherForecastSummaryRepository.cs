@@ -1,6 +1,6 @@
 ﻿using BlazorApp1.Domain;
 
-namespace BlazorApp1.Data.Abstractions.Repositories;
+namespace BlazorApp1.Domain.Abstractions.Repositories;
 
 public interface IWeatherForecastSummaryRepository
 {
