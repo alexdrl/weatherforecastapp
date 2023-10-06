@@ -1,18 +1,23 @@
 using BlazorApp1.Application;
 using BlazorApp1.Data;
-using BlazorApp1.Server.Abstractions.Contracts;
 using BlazorApp1.Server.Abstractions.Contracts.JsonContext;
 using BlazorApp1.Server.BackgroundServices;
 using BlazorApp1.Server.Profiles;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Encodings.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews()
-  //  .AddJsonOptions(options => options.JsonSerializerOptions.AddContext<WeatherForecastDtoJsonContext>())
-    ;
+    .AddJsonOptions(options =>
+    {
+        // ??? :D  https://github.com/dotnet/aspnetcore/issues/38720#issuecomment-1017156458
+        options.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
+        options.JsonSerializerOptions.AddContext<WeatherForecastDtoJsonContext>();
+    });
+
 builder.Services.AddRazorPages();
 
 builder.Services.AddWeatherForecastDataLayer();
