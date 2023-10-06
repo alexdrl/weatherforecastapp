@@ -24,7 +24,7 @@ public class WeatherForecastSummaryController : ControllerBase
     {
         var forecastSummaries = await _weatherForecastSummaryRepository.GetAllForecastSummaries();
 
-        return forecastSummaries.Select(x => MapToDto(x));
+        return forecastSummaries.Select(x => MapToDto(x)).ToList();
     }
 
     private static WeatherForecastSummaryDto MapToDto(WeatherForecastSummary x)

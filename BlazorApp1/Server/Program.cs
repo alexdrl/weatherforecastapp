@@ -1,5 +1,7 @@
 using BlazorApp1.Application;
 using BlazorApp1.Data;
+using BlazorApp1.Server.Abstractions.Contracts;
+using BlazorApp1.Server.Abstractions.Contracts.JsonContext;
 using BlazorApp1.Server.BackgroundServices;
 using BlazorApp1.Server.Profiles;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+  //  .AddJsonOptions(options => options.JsonSerializerOptions.AddContext<WeatherForecastDtoJsonContext>())
+    ;
 builder.Services.AddRazorPages();
 
 builder.Services.AddWeatherForecastDataLayer();
