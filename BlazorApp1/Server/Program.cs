@@ -13,8 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
     {
-        // ??? :D  https://github.com/dotnet/aspnetcore/issues/38720#issuecomment-1017156458
-        options.JsonSerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
         options.JsonSerializerOptions.AddContext<WeatherForecastDtoJsonContext>();
     });
 
