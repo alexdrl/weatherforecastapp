@@ -19,11 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Server.Integrati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Server.Unit.Tests", "BlazorApp1.Server.Unit.Tests\BlazorApp1.Server.Unit.Tests.csproj", "{C9524ABC-7B46-480C-B202-25004E87D082}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp1.Server.Abstractions", "BlazorApp1.Server.Abstractions\BlazorApp1.Server.Abstractions.csproj", "{78DBBB58-25F0-4B4D-884F-FA6DF377B0DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Server.Abstractions", "BlazorApp1.Server.Abstractions\BlazorApp1.Server.Abstractions.csproj", "{78DBBB58-25F0-4B4D-884F-FA6DF377B0DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp1.Application", "BlazorApp1.Application\BlazorApp1.Application.csproj", "{36FC5117-C425-4F3A-BEED-B8F76EE2D5B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Application", "BlazorApp1.Application\BlazorApp1.Application.csproj", "{36FC5117-C425-4F3A-BEED-B8F76EE2D5B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp1.Application.Unit.Tests", "BlazorApp1.Application.Unit.Tests\BlazorApp1.Application.Unit.Tests.csproj", "{192F7AAD-7CDE-4C39-9409-83C822A28D03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Application.Unit.Tests", "BlazorApp1.Application.Unit.Tests\BlazorApp1.Application.Unit.Tests.csproj", "{192F7AAD-7CDE-4C39-9409-83C822A28D03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
