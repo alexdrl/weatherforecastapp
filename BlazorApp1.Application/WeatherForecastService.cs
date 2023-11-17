@@ -3,6 +3,10 @@ using BlazorApp1.Application.Queue;
 using BlazorApp1.Domain;
 using BlazorApp1.Domain.Abstractions.Repositories;
 using BlazorApp1.Server.Abstractions.Contracts;
+using BlazorApp1.Server.Hubs;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -14,18 +18,21 @@ public class WeatherForecastService : IWeatherForecastService
     private readonly IWeatherForecastSummaryRepository _weatherForecastSummaryRepository;
     private readonly IMapper _mapper;
     private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+    private readonly IHubContext<WeatherForecastSummaryHub> hubContext;
     private readonly ILogger<WeatherForecastService> _logger;
 
     public WeatherForecastService(IWeatherForecastRepository weatherForecastRepository,
         IWeatherForecastSummaryRepository weatherForecastSummaryRepository,
         IMapper mapper,
         IBackgroundTaskQueue backgroundTaskQueue,
+        IHubContext<WeatherForecastSummaryHub> hubContext,
         ILogger<WeatherForecastService> logger)
     {
         _weatherForecastRepository = weatherForecastRepository;
         _weatherForecastSummaryRepository = weatherForecastSummaryRepository;
         _mapper = mapper;
         _backgroundTaskQueue = backgroundTaskQueue;
+        this.hubContext = hubContext;
         _logger = logger;
     }
 
@@ -35,7 +42,24 @@ public class WeatherForecastService : IWeatherForecastService
 
         await _weatherForecastRepository.AddWeatherForecast(forecast);
 
-        var tasktoDo = _backgroundTaskQueue.QueueBackgroundWorkItemAsync(ProcessWeatherSummary(forecast));
+        await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(ProcessWeatherSummary(forecast));
+    }
+
+    private static Func<IServiceProvider, CancellationToken, ValueTask> ProcessSignalRWeatherSummary(WeatherForecast forecast)
+    {
+        return (serviceProvider, cancellationToken) =>
+        {
+            var service = serviceProvider.GetRequiredService<IWeatherForecastService>();
+            return service.ProcessSignalRWeatherSummary(cancellationToken);
+        };
+    }
+
+    public async ValueTask ProcessSignalRWeatherSummary(CancellationToken cancellationToken)
+    {
+        //TODO: Move to a new RepoMethod.
+        var forecasts = await _weatherForecastSummaryRepository.GetAllForecastSummaries();
+
+        await this.hubContext.Clients.All.SendAsync("ReceiveForecastSummaries", forecasts.ToArray());
     }
 
     private static Func<IServiceProvider, CancellationToken, ValueTask> ProcessWeatherSummary(WeatherForecast forecast)
@@ -69,6 +93,8 @@ public class WeatherForecastService : IWeatherForecastService
         {
             await _weatherForecastSummaryRepository.AddWeatherForecastSummary(forecastSummary);
         }
+
+        await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(ProcessSignalRWeatherSummary(forecast));
 
         _logger.LogInformation($"Processing ForecastSummary and added {forecast.Date}");
     }

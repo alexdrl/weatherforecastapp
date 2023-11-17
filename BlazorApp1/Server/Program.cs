@@ -6,7 +6,6 @@ using BlazorApp1.Server.Hubs;
 using BlazorApp1.Server.Profiles;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Encodings.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +64,7 @@ app.MapRazorPages();
 app.MapControllers();
 
 app.MapHub<ChatHub>("/chathub");
+app.MapHub<WeatherForecastSummaryHub>("/weatherforecastsummaryhub");
 
 app.MapFallbackToFile("index.html");
 
